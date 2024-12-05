@@ -1,0 +1,14 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_GRAFANA_URL: http://mrxprt-vm/grafana
+        VITE_GRAFANA_USERNAME: admin
+        VITE_GRAFANA_PASSWORD: grafana
+        VITE_GRAFANA_DEFAULT_ORG_ID: 1
+    restart: unless-stopped
+    expose: 
+      - "5173"

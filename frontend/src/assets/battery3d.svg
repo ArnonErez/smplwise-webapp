@@ -1,0 +1,104 @@
+<svg id="battery" viewBox="0 0 245 400" width="245" height="400">
+    <defs>
+        <!-- Shadow Filter -->
+        <filter id="shadow-filter" height="1.6" width="1.2" y="-0.3" x="-0.1">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feFlood flood-color="black" flood-opacity="0.4"/>
+            <feComposite in2="blur" operator="in"/>
+            <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+
+        <!-- Gradients -->
+        <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4a0"/>
+            <stop offset="10%" stop-color="#55d400"/>
+            <stop offset="25%" stop-color="#55d400"/>
+            <stop offset="38%" stop-color="#9f5"/>
+            <stop offset="43%" stop-color="#9f5"/>
+            <stop offset="58%" stop-color="#4a0"/>
+            <stop offset="71%" stop-color="#4a0"/>
+            <stop offset="79%" stop-color="#4a0"/>
+            <stop offset="100%" stop-color="#112b00"/>
+        </linearGradient>
+
+        <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#a80"/>
+            <stop offset="11%" stop-color="#fc0"/>
+            <stop offset="22%" stop-color="#fc0"/>
+            <stop offset="35%" stop-color="#fd5"/>
+            <stop offset="47%" stop-color="#fd5"/>
+            <stop offset="60%" stop-color="#d4aa00"/>
+            <stop offset="74%" stop-color="#fc0"/>
+            <stop offset="85%" stop-color="#d4aa00"/>
+            <stop offset="100%" stop-color="#a80"/>
+        </linearGradient>
+
+        <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#d40000"/>
+            <stop offset="13%" stop-color="#ff2a2a"/>
+            <stop offset="23%" stop-color="#ff2a2a"/>
+            <stop offset="35%" stop-color="#f00"/>
+            <stop offset="45%" stop-color="#f55"/>
+            <stop offset="58%" stop-color="#f55"/>
+            <stop offset="68%" stop-color="#a00"/>
+            <stop offset="76%" stop-color="#a00"/>
+            <stop offset="85%" stop-color="#d40000"/>
+            <stop offset="100%" stop-color="#500"/>
+        </linearGradient>
+
+        <!-- Cap Gradient -->
+        <linearGradient id="capGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#000"/>
+            <stop offset="15%" stop-color="#555"/>
+            <stop offset="31%" stop-color="#ccc"/>
+            <stop offset="42%" stop-color="#555"/>
+            <stop offset="53%" stop-color="#333"/>
+            <stop offset="65%" stop-color="#555"/>
+            <stop offset="80%" stop-color="#ccc"/>
+            <stop offset="90%" stop-color="#555"/>
+            <stop offset="100%" stop-color="#000"/>
+        </linearGradient>
+
+        <!-- Highlight Gradient -->
+        <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#fff" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Battery Body Shadow -->
+    <path d="M 40 380 C 40 390, 205 390, 205 380 S 205 370, 40 370 Z" 
+          filter="url(#shadow-filter)" fill-opacity="0.3"/>
+
+    <!-- Battery Body -->
+    <path class="battery-outline" 
+          d="M 40 50 h 165 v 320 c 0 0, -82.5 10, -165 0 Z" 
+          fill="#333"/>
+
+    <!-- Battery Cap -->
+    <path d="M 95 25 h 55 v 25 h -55 Z" 
+          fill="url(#capGradient)"/>
+
+    <!-- Battery Fill -->
+    <path id="battery-fill" 
+          d="M 45 365 c 0 0, 77.5 5, 155 0 V 55 c 0 0, -77.5 -5, -155 0 Z" 
+          fill="url(#greenGradient)"/>
+
+    <!-- Left Highlight -->
+    <path d="M 50 55 v 300 l 10 5 v -310 Z" 
+          fill="url(#highlightGradient)"/>
+
+    <!-- Right Shine -->
+    <path d="M 185 55 v 300 c 0 0, 10 -150, 0 -300 Z" 
+          fill="url(#highlightGradient)" 
+          opacity="0.3"/>
+
+    <!-- Percentage Text -->
+    <text id="percentage-text" 
+          x="122.5" y="200" 
+          text-anchor="middle" 
+          class="battery-level-text">100%</text>
+</svg>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .container {
+            max-width: 300px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .battery-level-text {
+            font-family: Arial, sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            fill: white;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.7));
+        }
+
+        .slider {
+            width: 100%;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg id="battery" viewBox="0 0 300 500" width="300" height="500">
+            <defs>
+                <!-- Shadow Filter -->
+                <filter id="shadow-filter" height="1.6" width="1.2" y="-0.2" x="-0.1">
+                    <feGaussianBlur stdDeviation="8" result="blur"/>
+                    <feFlood flood-color="black" flood-opacity="0.4"/>
+                    <feComposite in2="blur" operator="in"/>
+                    <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+
+                <filter id="blur-filter">
+                    <feGaussianBlur stdDeviation="4"/>
+                </filter>
+
+                <!-- Replace the color gradients with a single overlay gradient -->
+                <linearGradient id="depthGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.3)"/>
+                    <stop offset="11%" stop-color="rgba(0,0,0,0.1)"/>
+                    <stop offset="25%" stop-color="rgba(255,255,255,0.4)"/>
+                    <stop offset="35%" stop-color="rgba(0,0,0,0.3)"/>
+                    <stop offset="43%" stop-color="rgba(255,255,255,0.3)"/>
+                    <stop offset="58%" stop-color="rgba(0,0,0,0.1)"/>
+                    <stop offset="81%" stop-color="rgba(255,255,255,0.5)"/>
+                    <stop offset="92%" stop-color="rgba(0,0,0,0.3)"/>
+                    <!-- <stop offset="96%" stop-color="rgba(0,0,0,0.6)"/> -->
+                </linearGradient>
+
+                <!-- Gradients -->
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4a0"/>
+                    <stop offset="10%" stop-color="#55d400"/>
+                    <stop offset="25%" stop-color="#55d400"/>
+                    <stop offset="38%" stop-color="#9f5"/>
+                    <stop offset="43%" stop-color="#9f5"/>
+                    <stop offset="58%" stop-color="#4a0"/>
+                    <stop offset="71%" stop-color="#4a0"/>
+                    <stop offset="79%" stop-color="#4a0"/>
+                    <stop offset="100%" stop-color="#112b00"/>
+                </linearGradient>
+
+                <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#a80"/>
+                    <stop offset="11%" stop-color="#fc0"/>
+                    <stop offset="22%" stop-color="#fc0"/>
+                    <stop offset="35%" stop-color="#fd5"/>
+                    <stop offset="47%" stop-color="#fd5"/>
+                    <stop offset="60%" stop-color="#d4aa00"/>
+                    <stop offset="74%" stop-color="#fc0"/>
+                    <stop offset="85%" stop-color="#d4aa00"/>
+                    <stop offset="100%" stop-color="#a80"/>
+                </linearGradient>
+
+                <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#d40000"/>
+                    <stop offset="13%" stop-color="#ff2a2a"/>
+                    <stop offset="23%" stop-color="#ff2a2a"/>
+                    <stop offset="35%" stop-color="#f00"/>
+                    <stop offset="45%" stop-color="#f55"/>
+                    <stop offset="58%" stop-color="#f55"/>
+                    <stop offset="68%" stop-color="#a00"/>
+                    <stop offset="76%" stop-color="#a00"/>
+                    <stop offset="85%" stop-color="#d40000"/>
+                    <stop offset="100%" stop-color="#500"/>
+                </linearGradient>
+
+                <!-- Cap Gradient -->
+                <linearGradient id="capGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#bbb"/>
+                    <stop offset="15%" stop-color="#555"/>
+                    <stop offset="31%" stop-color="#ccc"/>
+                    <stop offset="42%" stop-color="#555"/>
+                    <stop offset="53%" stop-color="#333"/>
+                    <stop offset="65%" stop-color="#555"/>
+                    <stop offset="80%" stop-color="#ccc"/>
+                    <stop offset="90%" stop-color="#555"/>
+                    <stop offset="100%" stop-color="#bbb"/>
+                </linearGradient>
+
+                <!-- Highlight Gradient -->
+                <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#fff" stop-opacity="0.7"/>
+                    <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+                </linearGradient>
+
+                <!-- Add cylinder edge gradient -->
+                <linearGradient id="edgeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#1a1a1a"/>
+                    <stop offset="50%" stop-color="#333"/>
+                    <stop offset="100%" stop-color="#1a1a1a"/>
+                </linearGradient>
+
+                <!-- Add cap cylinder gradient -->
+                <linearGradient id="capCylinderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4d4d4d"/>
+                    <stop offset="50%" stop-color="#666"/>
+                    <stop offset="100%" stop-color="#4d4d4d"/>
+                </linearGradient>
+
+                <!-- Metallic Gradient -->
+                <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#888"/>
+                    <stop offset="100%" stop-color="#555"/>
+                </linearGradient>
+            </defs>
+
+            <ellipse id="battery-shadow"
+                cx="180" 
+                cy="390" 
+                rx="100" 
+                ry="20"
+                fill="rgba(0,0,0,0.5)"
+                filter="url(#blur-filter)"/>
+
+            <!-- Battery structure -->
+            <g transform="translate(50, 50)">
+                <!-- Bottom edge (dark) -->
+                <path d="M 0 350
+                         a 100 10 0 0 0 200 0
+                         v 3
+                         a 100 10 0 0 1 -200 0
+                         Z" 
+                      fill="#333"/>
+
+                <!-- Main body cylinder -->
+                <path class="battery-outline" 
+                      d="M 0 50
+                         a 110 15 0 0 1 200 0
+                         v 300
+                         a 100 15 0 0 1 -200 0
+                         Z" 
+                      fill="#333"/>
+
+                <!-- Battery Fill (wider, with curved edges) -->
+                <path id="battery-fill" 
+                      d="M 10 340
+                         a 90 10 0 0 0 180 0
+                         V 70
+                         a 90 10 0 0 0 -180 0
+                         Z" 
+                      fill="none"/>
+
+                      
+                        <!-- Fill top curve highlight -->
+                        <path id="fill-highlight" 
+                        d="M 10 ${fillStart}
+                        a 90 10 0 0 0 60 0"
+                        stroke="rgba(0,0,0,0.3)"
+                        stroke-width="2"
+                        fill="none"/>
+                    
+                      <!-- Add this after the battery-fill path -->
+                      <path class="depth-overlay"
+                          d="M 10 340
+                          a 90 10 0 0 0 180 0
+                          V 70
+                          a 90 10 0 0 0 -180 0
+                          Z"
+                          fill="url(#depthGradient)"/>
+
+                      
+                    
+                <!-- Metallic collar below cap -->
+                <path d="M 0 50
+                         a 100 10 0 0 1 200 0
+                         v 5
+                         a 100 10 0 0 1 -200 0
+                         Z"
+                      fill="#333"/>
+
+                <!-- Top disc edge (shows depth) -->
+                <path d="M 0 42
+                         a 100 10 0 0 1 200 0
+                         v 7
+                         a 100 10 0 0 1 -200 0
+                         Z"
+                      fill="#262626"/>
+
+                <!-- Top disc surface -->
+                <path d="M 0 45
+                         a 100 10 0 0 1 200 0
+                         a 100 10 0 0 1 -200 0"
+                      fill="url(#capGradient)"/>
+
+                <!-- Cap base cylinder -->
+                <path d="M 85 35
+                         a 40 8 0 0 1 40 0
+                         v 12
+                         a 40 8 0 0 1 -40 0
+                         Z"
+                      fill="url(#capGradient)"/>
+
+                <!-- Cap top disc edge -->
+                <path d="M 85 35
+                         a 40 8 0 0 1 40 0
+                         v 2
+                         a 40 8 0 0 1 -40 0
+                         Z"
+                      fill="#575757"/>
+
+                <!-- Cap top disc surface -->
+                <path d="M 85 35
+                         a 40 8 0 0 1 40 0
+                         a 40 8 0 0 1 -40 0"
+                      fill="#ccc"/>
+            </g>
+
+            <!-- Percentage Text (adjusted position) -->
+            <text id="percentage-text" 
+                  x="150" y="250" 
+                  text-anchor="middle" 
+                  class="battery-level-text">100%</text>
+
+         
+        </svg>
+
+        <input type="range" min="0" max="100" value="100" class="slider" id="batteryRange">
+        <div id="percentageValue">100%</div>
+    </div>
+
+    <script>
+        const batteryFill = document.getElementById('battery-fill');
+        const percentageText = document.getElementById('percentage-text');
+        const percentageValue = document.getElementById('percentageValue');
+        const slider = document.getElementById('batteryRange');
+
+        function updateBattery(percentage) {
+            // Update text
+            percentageText.textContent = `${percentage}%`;
+            percentageValue.textContent = `${percentage}%`;
+
+            // Calculate fill height
+            const minY = 56;
+            const maxY = 340;
+            const range = maxY - minY;
+            const fillHeight = range * (percentage / 100);
+            const fillStart = maxY - fillHeight;
+
+            // Update fill path
+            const pathD = `M 10 340
+                           a 90 10 0 0 0 180 0
+                           V ${fillStart}
+                           a 90 10 0 0 0 -180 0
+                           Z`;
+            batteryFill.setAttribute('d', pathD);
+
+            // Update highlight position
+            const highlightPath = document.getElementById('fill-highlight');
+            const highlightD = `M 10 ${fillStart}
+                                a 90 10 0 0 0 180 0`;
+            highlightPath.setAttribute('d', highlightD);
+
+            // Set fill color based on percentage
+            let fillColor;
+            if (percentage <= 5) {
+                fillColor = '#f00';  // Red
+            } else if (percentage <= 30) {
+                fillColor = '#fc0';  // Yellow
+            } else {
+                fillColor = '#4a0';  // Green
+            }
+            batteryFill.setAttribute('fill', fillColor);
+        }
+
+        slider.addEventListener('input', (e) => {
+            updateBattery(parseInt(e.target.value));
+        });
+
+        // Initial update
+        updateBattery(100);
+    </script>
+</body>
+</html>

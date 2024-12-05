@@ -1,0 +1,209 @@
+---
+server:
+  address: 'tcp://:9091/authelia'
+
+log:
+  level: debug
+  format: text
+  file_path: /config/authelia.log
+  keep_stdout: true
+
+authentication_backend:
+  file:
+    path: /config/users.yml
+    password:
+      algorithm: argon2
+      iterations: 1
+      salt_length: 16
+      parallelism: 8
+      memory: 64
+
+  password_reset:
+    disable: true
+
+session:
+  name: 'authelia_session'
+  same_site: 'lax'
+  secret: KUcSQ4ULYKdFadVkdBT0HxgL5ig0gaEnxy4hQPW-ZETuo1XElBNiafN2jSEFFvAQbjWNDDwz
+  expiration: '1h'
+  inactivity: '5m'
+  remember_me: '1M'
+  cookies:
+    - domain: '100.85.232.42'
+      authelia_url: 'https://100.85.232.42/authelia'
+      default_redirection_url: 'https://100.85.232.42'
+      name: 'authelia_session'
+      same_site: 'lax'
+      expiration: '1h'
+      inactivity: '5m'
+      remember_me: '1d'
+
+storage:
+  encryption_key: LPYOYuxY5nIxc-Tqkgyd2R5K-H21rFZrCICkNuMnC0xq304ou-1GREdyShJehGrkir06RAWT
+  local:
+    path: /config/db.sqlite3
+
+access_control:
+  default_policy: deny
+  rules:
+    # Authelia endpoints
+    - domain: ["100.85.232.42"]
+      policy: bypass
+      resources:
+        - "^/authelia/.*$"
+
+    # Grafana access
+    - domain: ["100.85.232.42"]
+      policy: one_factor
+      resources:
+        - "^/grafana"
+      subject:
+        - "group:admins"
+
+    # Optional: Add a catch-all rule to redirect unauthenticated users
+    - domain: ["100.85.232.42"]
+      policy: one_factor
+      resources:
+        - "^/.*$"
+
+regulation:
+  max_retries: 3
+  find_time: 2m
+  ban_time: 5m
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt
+
+# identity_validation:
+#   reset_password:
+#     enabled: false
+
+identity_providers:
+  oidc:
+    hmac_secret: cMs4or5u3dL~b~JQ4UXGDlDhjalze01M-9_HgClxW0MliqNUSztdglRjeUvjTEk-CPB3GAIb
+    issuer_private_key: |
+      -----BEGIN PRIVATE KEY-----
+      MIIJQgIBADANBgkqhkiG9w0BAQEFAASCCSwwggkoAgEAAoICAQDCIdK92OEf6EAU
+      KmwDAaVw9qxbdCN9zluck9ztB6GwOrcWIVgjQ0tZUACm9XQaqwvGvQDKL4l7xBTa
+      zScDs32kxj1K04yyU2I+vpqeiBhZelhMOv/CAm/dp/54UZNLH7vP0cYWpHoFdb0F
+      e7CMr+xPLpfL5r7NciBeKM8fSEt3xwgmY1qCeDPpO0UgUTp190frM3MCGbAPzxOL
+      kgi2cUvsQNAa2Q0PlOS0GNKYPtUhnGL/mOKrG0iejJcsMyFTwTEevGO7q7Ia9dWE
+      UKqk5Dr9RlOIBvl23gPPHXG3iGgGfWV0xqw2RZRvVKnUpo7CSCslW04qfx8l8yJ5
+      n2o9hiAA3q0FdJK2iFL4KNgzfgQHeiIMCmGeYqBG1nO/AnhkcTLDfIPNxa0dlLmh
+      QfPgle29ewWZsN3m28Uh/oF3edDNKa38jPQLGq3irtofvUIzowJJyKc5iL0Y7/BM
+      BfjRln1k0AwhRbVUGmD0TqgHTx4/Qzs4lQXPNp4U9bccIqGYgzRo71BGaHeTJyUD
+      FkhRUm/NtdFcBMBqAmkBtfMCLery+HXQGm8jMTOX3dMk+QjwPRr3SF4FeieZmj2h
+      hu28JUFucHCNnxZmMbjwOb3ybUC+16zR2UaeUl2IyqF+V1WGvpuXPYsSSbIiaTvB
+      YkHFPLO0svvVZjwwgm37sdR5y4b2NQIDAQABAoICACD/ptbmer31uI609087hGfD
+      RmD1SOMlpKTk7XTNC0rtcBmu6VB1K+Wul63Jo0a1NHc/wVac5f3HwtO+c5dJd13+
+      5IRHmW7mhZisxZOVBq6PAVtT3A2aZHGFENha5XKrnj0hJ07J/oPXE55O/B+t97kt
+      7leWjXBWqfHXdf2XSFy/1D7SPJxY2loW3RU1OX673dm5ER+WRjsps+TRmfGJKKKs
+      EbO+mV3ArW9/mKyQYaIo9xsDXeQ/6wQoWboFpvCZskPLOhi4grnad8TaAWet8+kB
+      f0lsBhOSgYs/MglEgoo33nsPGk7PXP/foE6pUTLtGYhsEMlgemb1ATMzSdfTaLTw
+      5yP64hyIZkToHmlAEwFnJpkhJn8BfQQBHbGYpfhcggKZBdX2TT8nJgAz5fyTZzOr
+      jbp+XFFlPnZOwAXKwzReRA0h5Q+A21Dhxiaqsr3cC6ZLlGBABmpV6IuMQ0N0rtis
+      pZbE8RUG5smztOqKFl+g5rES6SOKKCuxiFuVEx9Mk52cQuMWpxh1V6LrB4Sj4uWo
+      od2NK3ypJ+BLvIboIDKyZV4jjcO1afnrQP8CUCtyK76I/go0Z7Xk0RiUErZSA3TR
+      vRnPJsAm5s3xfuvP7KCnkbdDRAh3iSFNxgJKnRsR0jRLndEUAPIYkxIeOmjMaKOP
+      zMHGLzZJrKCmsndVjkkxAoIBAQD4qraLs1vIlNtqxOJZEUyNF2FacEP28EFOojYN
+      JhrOiP1VQtp0SGyNbbhHAPRljkxNSe82wwJU4Qd64A6MWC4Ih+Ladzg1v56tuYQI
+      8UytnnT9TPh6OXl3zdGP+Wz5hmCxtl8zqD/WexqKODpM436ZYZXoP4iF+h5Lc+SQ
+      jCERKKoOmCJrSdXYfreAaWLdsDiTy7tuIVc6I4gbU/bTw6EitauXPaAaXwv1LCzN
+      gmJFXG0OCCHP6Bkd0vWj/FCO9i48Qlx6RLcivax6TzZCZ+GasEHzHO4m5l9rzbop
+      EJPbNz3IXR7Hlm4ezw392VD4WTYMP6cVJWoSTItHj3ExhdGnAoIBAQDH22fGFAnk
+      id8CNGCHqlq6Hg4+Vkdks3r048PTaZzEV/wiGJ7W4Xyf29+PiO1ClArOp5SBfG0t
+      dIWTBQovWwsCziVTkyDkIWz540lqYRFFJIkpPAQaliMANBf+tiNxP+DVHSXuNI9Z
+      Cz+mgJIcON/u6+HhNediVJfa+sH4g3zIqRBqITiixSdfvqX5dQvK45SAEW9XQ5Hk
+      8DsbSrEpo87JtRmNfaO9cb8sJa0tqJ3ogQdQwEKnuOBwfXuxafcyy2pePHM6rvQl
+      KI/xgnfN/y6Vc7f0PjFUJlf/43u7kNY7ymzPrFOdo1TXfx1wcAOZWO7I7CClFQSO
+      ZcZgdFOERhzDAoIBAHzEkzFHPi9HWUyaGwQbpPBKIePR3pghdnMw+rPgQaUNoSbN
+      k3Sy/hx8R/EAbqAiJPDGvwsYD6xs+GbT0xjiCb7oB5AcL4zwZ3q9UZ13DUUz83lA
+      zI/vFJ5jG9oEiYQtw4iHe/8cVWOVgvyFN+NqZhQpnaDZd/PZSqgLL0zDsre8Uo9e
+      EC8K7gxhkEsTFbMr/0dQ+utIOU8Hkvw7ReZ9CvWyd7U8C4AP3p0WnChFWm9475MR
+      y31Y9Hk9Z1jvebAxn4NGvMXwgn8g8lCwPAZXvx/xfjWwd2H3Rzt9DwIZukZM0mgd
+      KRt1xC0bMOcEyhbCFFdS/M+kZTNnSp8OPvpdLZMCggEBAIfZuByImoDixtg0yjjt
+      r2Y77+qnszfcWIQGHqKic5FzTUvP+IiQFaqERt7GcKCFCSOX/fZWoc/4GKPrFRVD
+      iaSKhAzfQchQgEcMHGdXO+oH/8Qrq45256vHvVfCby0YArhaa+ITkC0y3D1NwAO3
+      FWDOrmfrwDCy19ZeBWPr3PJ5GVNK6bia0zzd1uxOh4mOUO8M6uYiZBV+xm6ywuJP
+      Gs05cPkgoiCwJQbZRXJ3336f1l0pkyV3IfjVEzNxmDrK0q7j4F/PdN2dSNsdmFpK
+      T1v/oNdBPz64IbEq7Hx+42EZJAW2WdAZqh4hpd08BvZB4W5qM3aDZul0fPgrmmmb
+      TwkCggEAT0T5H3neV2xA1hmVUiIs+bbtxYSpfmqkgvcRlLfk04fs0qZgO19n5mF8
+      PTvCXpVgaqtTrAFcHfl0bxfYKeXXFYRg2DsQMZg0Xa4eEspmDktznnRiVFGfAH8b
+      YhuOQM7ib5O5Nozi1Y4p8jpGg0SKJxv5aYEGy3oTokH460wZnHUHmwsOXX5xZbU9
+      59gLyNnmP31vnxfXdu8QRPL0YsX7WofOvXKq/D4NdzF1SrfLRml6c/acljMB+fZL
+      J1gY8usHutOo9lf+ZP2zkz4hH6QNfiNrpKYvcsGZREwxvdKeLBVbVezAvLtbHltk
+      PBd16ytG6yFlDwNfOFmauF/pNr0EKg==
+      -----END PRIVATE KEY-----
+    lifespans:
+      access_token: 1h
+      authorize_code: 1m
+      id_token: 1h
+      refresh_token: 90d
+    enable_client_debug_messages: false
+    enforce_pkce: public_clients_only
+    cors:
+      endpoints: 
+        - 'authorization'
+        - 'token'
+        - 'revocation'
+        - 'introspection'
+        - 'userinfo'
+      allowed_origins:
+        - https://100.85.232.42
+        - http://nginx:443
+        - http://172.18.0.1
+    clients:
+      # --------------------------------------------------------
+      # ---------------------- Grafana --------------------------
+      # --------------------------------------------------------
+      - client_id: grafana
+        client_name: Grafana
+        client_secret: $pbkdf2-sha512$310000$RqyjVdFZ24szrVeVSEU3WQ$xIAqxfxQS9/CpB9TXBObXfeLgKDzF9iNTPU.pQL75wvO9hgB.gG6EBoO8GAGDkl9U/zJ1lIGb8u2QVwOimY.Sw
+        public: false
+        authorization_policy: one_factor
+        consent_mode: implicit
+        redirect_uris:
+          - https://100.85.232.42/grafana/login/generic_oauth
+        scopes:
+          - openid
+          - profile
+          - email
+          - groups
+        grant_types:
+          - authorization_code
+        response_types:
+          - code
+        userinfo_signed_response_alg: none
+
+      # --------------------------------------------------------
+      # ---------------------- Frontend ------------------------
+      # --------------------------------------------------------
+      - client_id: frontend
+        client_name: Frontend
+        client_secret: $pbkdf2-sha512$310000$M3U.XaNboPcITyLRmpEPsw$S1QBE7Wls1LA6N.2dckW5dOetsZUOfWAfCxWgNIpBnzobHC6pow0j1cqHHHi6.Y9QP8OIIp3IUe1pmEbIvGCfw
+        public: false
+        authorization_policy: one_factor
+        consent_mode: implicit
+        redirect_uris:
+          - 'https://100.85.232.42/callback'
+          # - 'https://100.85.232.42/silent-callback'
+        scopes:
+          - 'openid'
+          - 'profile'
+          - 'email'
+          - 'groups'
+          # - 'offline_access'
+        grant_types:
+          - authorization_code
+          - refresh_token
+        response_types:
+          - 'code'
+        response_modes:
+          - 'form_post'
+          - 'query'
+        userinfo_signed_response_alg: 'none'
+        # request_object_signing_alg: 'private_key_jwt'
+        # token_endpoint_auth_signing_alg: 'private_key_jwt'
+        token_endpoint_auth_method: 'client_secret_post'
+

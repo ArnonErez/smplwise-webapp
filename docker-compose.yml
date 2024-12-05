@@ -1,0 +1,101 @@
+networks:
+  grafana-net:
+    driver: bridge
+
+services:
+  # swag:
+  #   container_name: 'swag'
+  #   image: 'lscr.io/linuxserver/swag'
+  #   restart: 'unless-stopped'
+  #   networks:
+  #     - grafana-net
+  #   ports:
+  #     - '80:80'
+  #     - '443:443'
+  #   volumes:
+  #     - '${PWD}/swag:/config'
+  #     ## Uncomment the line below if you want to use the Authelia configuration snippets.
+  #     #- '${PWD}/data/nginx/snippets:/snippets'
+  #   environment:
+  #     PUID: '1000' # needs to be changed
+  #     PGID: '1000' # needs to be changed
+  #     TZ: 'UTC+2'
+  #     URL: 'desktop-ggk0vfq.tail522f9.ts.net'
+  #     SUBDOMAINS: 'auth,grafana,app'
+  #     VALIDATION: 'http'
+  #     CERTPROVIDER: 'selfsigned'
+  #     ONLY_SUBDOMAINS: 'false'
+  #     STAGING: 'false'
+  #     EMAIL: 'admin@smplwise.com'
+  #   cap_add:
+  #     - 'NET_ADMIN'
+  #   depends_on:
+  #     - authelia
+  #     - grafana
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  nginx:
+    image: lscr.io/linuxserver/nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/config/nginx
+      - ./nginx/logs:/var/log/nginx
+    networks:
+      - grafana-net 
+    environment:
+      - TZ=UTC
+      - DOCKER_MODS=linuxserver/mods:nginx-proxy-confs
+    depends_on:
+      - authelia
+      - grafana
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    volumes:
+      - './authelia:/config'
+    environment:
+      - TZ=UTC+2
+    networks:
+      - grafana-net
+    # expose:
+    #   - 9091
+    restart: unless-stopped
+    depends_on:
+      - redis
+    healthcheck:
+      disable: true
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - grafana-net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SERVER_ROOT_URL=https://100.85.232.42/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - grafana-net
+
+
+
+volumes:
+  grafana-data:
+  redis-data:
