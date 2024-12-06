@@ -47,8 +47,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
 
   const handleLogout = async () => {
     try {
-      await auth.signoutRedirect();
-      await logout();
+      auth.removeUser();
+      auth.signoutPopup().then(() => {
+        console.log("Logout successful");
+        const keysToRemove = Object.keys(localStorage)
+          .filter(key => key.startsWith('oidc.'));
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+      }).catch((error) => {
+        console.error("Logout failed:", error);
+      }).finally(() => {
+        navigate('/');
+      });
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -91,7 +100,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
 
   const getSelectedKeys = () => {
     const pathname = location.pathname;
-    if (pathname === '/') return ['overview'];
+    if (pathname === '/app') return ['overview'];
     
     // For dashboard items
     if (pathname.startsWith('/dashboards/')) {
@@ -127,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onCollapse }) => {
       key: "overview",
       icon: <HomeOutlined />,
       label: "Overview",
-      onClick: () => navigate("/"),
+      onClick: () => navigate("/app"),
     },
     // Customer selector for admin users
     ...(isAdmin ? [{

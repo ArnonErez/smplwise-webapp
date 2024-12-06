@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Flex, Space, Typography } from "antd";
 import { useAuth } from "react-oidc-context";
 
-function Welcome() {
+export const Welcome: React.FC = () => {
   const auth = useAuth();
   return (
     <Flex 
@@ -19,6 +19,4 @@ function Welcome() {
       </div>
     </Flex>
   );
-}
-
-export default Welcome;
+};

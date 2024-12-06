@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Space, Card, Spin, theme, Flex } from 'antd';
 import { ExpandOutlined, CompressOutlined } from '@ant-design/icons';
-// import { useAccess } from '../../../hooks/useAccess';
 import { GrafanaService } from '../../../services/GrafanaService';
 import { DashboardsView } from './components/DashboardsView';
 import { IGrafanaOrg, IGrafanaDashboard } from '../../../interfaces';
@@ -24,7 +23,6 @@ interface Dashboard {
 
 export const DashboardShow: React.FC = () => {
     const { customerId } = useParams();
-    // const { isAdmin } = useAccess();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [organization, setOrganization] = useState<IGrafanaOrg>();

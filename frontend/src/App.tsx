@@ -18,7 +18,6 @@ import { AlertsList } from "./pages/alerts/list";
 import { AlertsShow } from "./pages/alerts/show";
 import { DashboardsList } from "./pages/dashboards/list";
 import { useAuthelia } from "./hooks/useAuthelia";
-import { useGrafana } from "./hooks/useGrafana";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { DashboardShow } from "./pages/dashboards/show";
@@ -27,50 +26,18 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { authProvider } from "./providers/authProvider";
 import { SilentCallback } from "./components/auth/SilentCallback";
 import { CustomersPage } from "./pages/admin/customers";
-
+import { AuthBarrier } from "./components/auth/AuthBarrier";
+import { AdminBarrier } from "./components/auth/AdminBarrier";
+import { Welcome } from "../public/welcome";
 
 function App() {
   const queryClient = new QueryClient();
-  // const { isLoading, isAuthenticated } = useAuth();
-  // const auth = useAuth();
-
-  // console.log("isAuthenticated:", isAuthenticated);
-  // console.log("OIDC Auth User:", auth.user);
-
-  // if (isLoading) {
-  //   return <div>Loading...</div>;
-  // }
-
-
-  // const ProtectedListRoute: React.FC<{ 
-  //   component: React.ComponentType; 
-  //   resource: string;
-  // }> = ({ component: Component, resource }) => {
-  //   const { isAdmin } = useAuthelia();
-  //   const { user: grafanaUser } = useGrafana();
-  //   const orgId = grafanaUser?.orgId;
-  //   const navigate = useNavigate();
-    
-  //   useEffect(() => {
-  //       if (orgId && !isAdmin) {
-  //           navigate(`/${resource}/${orgId}/${resource === 'alerts' ? 'active' : 'overview'}`, { replace: true });
-  //       }
-  //   }, [orgId, isAdmin]);
-    
-  //   if (orgId && !isAdmin) {
-  //       return null;
-  //   }
-    
-  //   return <Component />;
-  // };
 
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        {/* <RefineKbarProvider> */}
           <ColorModeContextProvider>
             <AntdApp>
-              {/* <DevtoolsProvider> */}
                 <Refine
                   dataProvider={dataProvider}
                   authProvider={authProvider}
@@ -79,27 +46,28 @@ function App() {
                   <Routes>
                     <Route path="callback" element={<AuthCallback />} />
                     <Route path="silent-callback" element={<SilentCallback />} />
-                    <Route element={ <AppLayout /> }>
-                      <Route path="/" element={<OverviewPage />} />
-                      <Route path="alerts/*" element={<AlertsShow />} />
-                        {/* <Route path=":customerId" element={<AlertsShow />} />
-                        <Route path=":customerId/:type" element={<AlertsShow />} /> */}
-                      {/* </Route> */}
-                      <Route path="dashboards*" element={<DashboardShow />}>
-                        <Route path=":customerId" element={<DashboardShow />} />
-                        {/* <Route path=":customerId/:type" element={<DashboardShow />} /> */}
-                      </Route>
-                      <Route path="admin">
-                        <Route key="customers" path="customers/*" element={<CustomersPage />} />
+                    <Route path="/" element={<Welcome />} />
+                    <Route element={<AuthBarrier />}>
+                      <Route element={<AppLayout />}>
+                        <Route path="/app" element={<OverviewPage />} />
+                        <Route path="alerts/*" element={<AlertsShow />}>
+                          <Route path=":customerId" element={<AlertsShow />} />
+                          <Route path=":customerId/:type" element={<AlertsShow />} />
+                        </Route>
+                        <Route path="dashboards/*" element={<DashboardShow />}>
+                          <Route path=":customerId" element={<DashboardShow />} />
+                        </Route>
+                        <Route element={<AdminBarrier />}>
+                          <Route path="admin">
+                            <Route path="customers/*" element={<CustomersPage />} />
+                          </Route>
+                        </Route>
                       </Route>
                     </Route>
                   </Routes>
                 </Refine>
-                {/* <DevtoolsPanel /> */}
-              {/* </DevtoolsProvider> */}
             </AntdApp>
           </ColorModeContextProvider>
-        {/* </RefineKbarProvider> */}
       </QueryClientProvider>
     </BrowserRouter>
   );

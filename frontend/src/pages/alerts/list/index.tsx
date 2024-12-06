@@ -5,11 +5,11 @@ import { CustomerAlertsTable } from './components/CustomerAlertsTable';
 import { ICustomer, IUser } from '../../../interfaces';
 import { RESOURCES } from '../../../constants';
 import { useNavigate } from 'react-router-dom';
-import { useAccess } from '../../../hooks/useAccess';
 import { log } from 'console';
+import { useAuthelia } from '../../../hooks/useAuthelia';
 
 export const AlertsList: React.FC = () => {
-    const { isAdmin } = useAccess();
+    const { isAdmin } = useAuthelia();
     const navigate = useNavigate();
 
     // Fetch all customers the user has access to

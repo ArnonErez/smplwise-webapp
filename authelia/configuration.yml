@@ -25,9 +25,9 @@ session:
   name: 'authelia_session'
   same_site: 'lax'
   secret: KUcSQ4ULYKdFadVkdBT0HxgL5ig0gaEnxy4hQPW-ZETuo1XElBNiafN2jSEFFvAQbjWNDDwz
-  expiration: '1h'
-  inactivity: '5m'
-  remember_me: '1M'
+  expiration: '10m'
+  inactivity: '3m'
+  # remember_me: '1M'
   cookies:
     - domain: '100.85.232.42'
       authelia_url: 'https://100.85.232.42/authelia'
@@ -187,7 +187,7 @@ identity_providers:
         consent_mode: implicit
         redirect_uris:
           - 'https://100.85.232.42/callback'
-          # - 'https://100.85.232.42/silent-callback'
+          - 'https://100.85.232.42/silent-callback'
         scopes:
           - 'openid'
           - 'profile'

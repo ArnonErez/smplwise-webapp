@@ -14,6 +14,7 @@ export const authProvider: AuthProvider = {
     
     logout: async () => {
       const auth = useAuth();
+      auth.removeUser();
       await auth.signoutRedirect();
       return {
         success: true
