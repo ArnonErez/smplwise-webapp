@@ -1,0 +1,8 @@
+---
+users:
+  admin:
+    displayname: "Admin User"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$lgItmM40f0tJzQ1LwHQ//g$MNxutUj3klexnyamxMOwTap7Bqb8eb/sG3+MaggZxWU"  # Password: admin
+    email: admin@smplwise.com
+    groups:
+      - admins
