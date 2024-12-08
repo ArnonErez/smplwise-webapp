@@ -1,6 +1,6 @@
 ---
 server:
-  address: 'tcp://:9091/authelia'
+  address: 'tcp://:9091/auth'
 
 log:
   level: debug
@@ -29,14 +29,22 @@ session:
   inactivity: '3m'
   # remember_me: '1M'
   cookies:
-    - domain: '100.85.232.42'
-      authelia_url: 'https://100.85.232.42/authelia'
-      default_redirection_url: 'https://100.85.232.42'
+    - domain: 'smplwise.com'
+      authelia_url: 'https://smplwise.com/auth'
+      default_redirection_url: 'https://smplwise.com'
       name: 'authelia_session'
       same_site: 'lax'
       expiration: '1h'
       inactivity: '5m'
       remember_me: '1d'
+    # - domain: '100.85.232.42'
+    #   authelia_url: 'https://100.85.232.42/auth'
+    #   default_redirection_url: 'https://100.85.232.42'
+    #   name: 'authelia_session'
+    #   same_site: 'lax'
+    #   expiration: '1h'
+    #   inactivity: '5m'
+    #   remember_me: '1d'  
 
 storage:
   encryption_key: LPYOYuxY5nIxc-Tqkgyd2R5K-H21rFZrCICkNuMnC0xq304ou-1GREdyShJehGrkir06RAWT
@@ -47,21 +55,21 @@ access_control:
   default_policy: deny
   rules:
     # Authelia endpoints
-    - domain: ["100.85.232.42"]
+    - domain: ["smplwise.com"]
       policy: bypass
       resources:
-        - "^/authelia/.*$"
+        - "^/auth/.*$"
 
     # Grafana access
-    - domain: ["100.85.232.42"]
+    - domain: ["smplwise.com"]
       policy: one_factor
       resources:
-        - "^/grafana"
+        - "^/grafana/.*$"
       subject:
         - "group:admins"
 
     # Optional: Add a catch-all rule to redirect unauthenticated users
-    - domain: ["100.85.232.42"]
+    - domain: ["smplwise.com"]
       policy: one_factor
       resources:
         - "^/.*$"
@@ -150,9 +158,11 @@ identity_providers:
         - 'introspection'
         - 'userinfo'
       allowed_origins:
-        - https://100.85.232.42
+        - https://smplwise.com
         - http://nginx:443
         - http://172.18.0.1
+        - http://172.18.0.3
+        - http://grafana:3000
     clients:
       # --------------------------------------------------------
       # ---------------------- Grafana --------------------------
@@ -164,7 +174,7 @@ identity_providers:
         authorization_policy: one_factor
         consent_mode: implicit
         redirect_uris:
-          - https://100.85.232.42/grafana/login/generic_oauth
+          - https://smplwise.com/grafana/login/generic_oauth
         scopes:
           - openid
           - profile
@@ -186,8 +196,8 @@ identity_providers:
         authorization_policy: one_factor
         consent_mode: implicit
         redirect_uris:
-          - 'https://100.85.232.42/callback'
-          - 'https://100.85.232.42/silent-callback'
+          - 'https://smplwise.com/callback'
+          - 'https://smplwise.com/silent-callback'
         scopes:
           - 'openid'
           - 'profile'
