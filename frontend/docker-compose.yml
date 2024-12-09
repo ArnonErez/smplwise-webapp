@@ -1,0 +1,16 @@
+version: '3'
+services:
+  frontend:
+    image: smplwise/smplwise-ui
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args:
+        VITE_APP_URL: https://smplwise.com
+        VITE_GRAFANA_URL: ${VITE_APP_URL}/grafana
+        VITE_GRAFANA_DEFAULT_ORG_ID: 1
+        VITE_AUTH_URL: ${VITE_APP_URL}/auth
+        VITE_AUTH_CLIENT_ID: frontend
+        VITE_AUTH_CLIENT_SECRET: QN_EVekFgTEQPhuLNNnY9JbnnIjxP4nha9BiypIu6M9qrHVw6jfLvd~rPCcnneDzdP2QZoC3
+        VITE_AUTH_REDIRECT_URI: ${VITE_APP_URL}/app
+        VITE_APP_CALLBACK_URL: ${VITE_APP_URL}/callback

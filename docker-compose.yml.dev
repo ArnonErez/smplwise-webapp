@@ -1,0 +1,93 @@
+networks:
+  smplwise-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+          # gateway: 172.18.0.1
+
+services:
+  dns:
+    image: jpillora/dnsmasq
+    container_name: dns
+    ports:
+      - "53:53/udp"
+      # - "8080:8080"  # Web UI for managing DNS
+    environment:
+      - HTTP_USER=admin
+      - HTTP_PASS=admin  # Change this in production
+    volumes:
+      - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./dnsmasq/dnsmasq.log:/var/log/dnsmasq.log
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - smplwise-net
+        # ipv4_address: 172.18.0.53
+    restart: unless-stopped
+
+  nginx:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/config/nginx
+      - ./nginx/logs:/var/log/nginx
+    networks:
+      smplwise-net:
+        ipv4_address: 10.0.0.100
+    environment:
+      - TZ=UTC
+      - DOCKER_MODS=linuxserver/mods:nginx-proxy-confs
+    depends_on:
+      - authelia
+      - grafana
+      - dns
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    volumes:
+      - './authelia:/config'
+    environment:
+      - TZ=UTC+2
+    networks:
+      - smplwise-net
+    # expose:
+    #   - 9091
+    restart: unless-stopped
+    depends_on:
+      - redis
+    healthcheck:
+      disable: true
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - smplwise-net
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SERVER_DOMAIN=smplwise.com
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - smplwise-net
+
+volumes:
+  grafana-data:
+  redis-data:

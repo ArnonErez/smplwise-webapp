@@ -1,10 +1,14 @@
-networks:
-  smplwise-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.0.0.0/24
+# networks:
+#   monitoring:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 10.0.0.0/24
           # gateway: 172.18.0.1
+
+networks:
+  monitor_monitoring:
+    external: true
 
 services:
   dns:
@@ -21,8 +25,8 @@ services:
     cap_add:
       - NET_ADMIN
     networks:
-      - smplwise-net
-        # ipv4_address: 172.18.0.53
+      monitor_monitoring:
+        ipv4_address: 10.0.0.53
     restart: unless-stopped
 
   nginx:
@@ -35,15 +39,15 @@ services:
       - ./nginx:/config/nginx
       - ./nginx/logs:/var/log/nginx
     networks:
-      smplwise-net:
+      monitor_monitoring:
         ipv4_address: 10.0.0.100
     environment:
       - TZ=UTC
       - DOCKER_MODS=linuxserver/mods:nginx-proxy-confs
     depends_on:
-      - authelia
-      - grafana
       - dns
+    dns:
+      - 10.0.0.53
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
@@ -56,37 +60,58 @@ services:
     environment:
       - TZ=UTC+2
     networks:
-      - smplwise-net
+      - monitor_monitoring
+    dns:
+      - 10.0.0.53
     # expose:
     #   - 9091
     restart: unless-stopped
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     healthcheck:
       disable: true
 
-  redis:
-    image: redis:alpine
-    container_name: redis
-    volumes:
-      - redis-data:/data
-    networks:
-      - smplwise-net
+  # redis:
+  #   image: redis:alpine
+  #   container_name: redis
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - monitor_monitoring
+  #   restart: unless-stopped
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   environment:
+  #     - GF_SERVER_DOMAIN=smplwise.com
+  #   volumes:
+  #     - grafana-data:/var/lib/grafana
+  #     - ./grafana/provisioning:/etc/grafana/provisioning
+  #     - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+  #     - ./grafana/dashboards:/var/lib/grafana/dashboards
+  #   networks:
+  #     - monitoring
+
+  frontend:
+    image: smplwise/smplwise-ui
+    container_name: frontend
     restart: unless-stopped
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    environment:
-      - GF_SERVER_DOMAIN=smplwise.com
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    dns:
+      - 10.0.0.53
     networks:
-      - smplwise-net
+      - monitor_monitoring
+    environment:
+      - VITE_APP_URL=https://smplwise.com
+      - VITE_GRAFANA_URL=https://smplwise.com/grafana
+      - VITE_GRAFANA_DEFAULT_ORG_ID=1
+      - VITE_AUTH_URL=https://smplwise.com/auth
+      - VITE_AUTH_CLIENT_ID=1234567890
+      - VITE_AUTH_CLIENT_SECRET=1234567890
+      - VITE_AUTH_REDIRECT_URI=https://smplwise.com/app
+    ports:
+      - "5173:5173"
 
-volumes:
-  grafana-data:
-  redis-data:
+# volumes:
+#   grafana-data:
+#   redis-data:
