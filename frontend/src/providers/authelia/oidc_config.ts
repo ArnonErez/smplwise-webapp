@@ -12,7 +12,7 @@ const app_url = currentHost;
 const auth_url = `${currentHost}/auth`;
 const auth_client_id = "frontend";
 const auth_client_secret = "QN_EVekFgTEQPhuLNNnY9JbnnIjxP4nha9BiypIu6M9qrHVw6jfLvd~rPCcnneDzdP2QZoC3";
-const auth_redirect_uri = `${currentHost}/callback`;
+const auth_redirect_uri = "https://smplwise.com/callback";
 
 export const oidcConfig = {
     authority: auth_url,

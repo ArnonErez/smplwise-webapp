@@ -22,6 +22,7 @@ services:
       - HTTP_PASS=admin  # Change this in production
     volumes:
       - ./dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./dnsmasq/hosts:/etc/hosts
     cap_add:
       - NET_ADMIN
     networks:
@@ -34,7 +35,8 @@ services:
     container_name: nginx
     ports:
       - "80:80"
-      - "443:443"
+      - "443:443/tcp"
+      - "443:443/udp"
     volumes:
       - ./nginx:/config/nginx
       - ./nginx/logs:/var/log/nginx
@@ -58,13 +60,13 @@ services:
     volumes:
       - './authelia:/config'
     environment:
-      - TZ=UTC+2
+      - TZ=UTC
     networks:
       - monitor_monitoring
     dns:
       - 10.0.0.53
-    # expose:
-    #   - 9091
+    ports:
+      - 9091:9091
     restart: unless-stopped
     # depends_on:
     #   - redis
@@ -96,7 +98,7 @@ services:
   frontend:
     image: smplwise/smplwise-ui
     container_name: frontend
-    restart: unless-stopped
+    # restart: unless-stopped
     dns:
       - 10.0.0.53
     networks:
@@ -110,7 +112,7 @@ services:
       - VITE_AUTH_CLIENT_SECRET=1234567890
       - VITE_AUTH_REDIRECT_URI=https://smplwise.com/app
     ports:
-      - "5173:5173"
+      - 5173:5173
 
 # volumes:
 #   grafana-data:

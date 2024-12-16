@@ -1,6 +1,10 @@
 ---
 server:
   address: 'tcp://:9091/auth'
+  endpoints:
+    authz:
+      auth-request:
+        implementation: 'AuthRequest'
 
 log:
   level: debug
@@ -37,14 +41,22 @@ session:
       expiration: '1h'
       inactivity: '5m'
       remember_me: '1d'
-    # - domain: '100.85.232.42'
-    #   authelia_url: 'https://100.85.232.42/auth'
-    #   default_redirection_url: 'https://100.85.232.42'
+    # - domain: 'mrxprt-vm'
+    #   authelia_url: 'https://mrxprt-vm/auth'
+    #   default_redirection_url: 'https://mrxprt-vm'
     #   name: 'authelia_session'
     #   same_site: 'lax'
     #   expiration: '1h'
     #   inactivity: '5m'
-    #   remember_me: '1d'  
+    #   remember_me: '1d'
+    # - domain: 'localhost'
+    #   authelia_url: 'https://localhost/auth'
+    #   default_redirection_url: 'https://localhost'
+    #   name: 'authelia_session'
+    #   same_site: 'lax'
+    #   expiration: '1h'
+    #   inactivity: '5m'
+    #   remember_me: '1d'
 
 storage:
   encryption_key: LPYOYuxY5nIxc-Tqkgyd2R5K-H21rFZrCICkNuMnC0xq304ou-1GREdyShJehGrkir06RAWT
@@ -55,13 +67,13 @@ access_control:
   default_policy: deny
   rules:
     # Authelia endpoints
-    - domain: ["*"]
+    - domain: ["smplwise.com"]
       policy: bypass
       resources:
         - "^/auth/.*$"
 
     # Grafana access
-    - domain: ["*"]
+    - domain: ["smplwise.com"]
       policy: one_factor
       resources:
         - "^/grafana/.*$"
@@ -69,7 +81,7 @@ access_control:
         - "group:admins"
 
     # Optional: Add a catch-all rule to redirect unauthenticated users
-    - domain: ["*"]
+    - domain: ["smplwise.com"]
       policy: one_factor
       resources:
         - "^/.*$"
@@ -159,8 +171,9 @@ identity_providers:
         - 'userinfo'
       allowed_origins:
         - https://smplwise.com
-        - http://nginx:443
         - http://10.0.0.1
+        - http://10.0.0.6
+        - http://10.0.0.7
         # - http://172.18.0.3
         # - http://grafana:3000
     clients:
@@ -175,6 +188,7 @@ identity_providers:
         consent_mode: implicit
         redirect_uris:
           - https://smplwise.com/grafana/login/generic_oauth
+          - http://10.0.0.6/login/generic_oauth
         scopes:
           - openid
           - profile
@@ -197,7 +211,8 @@ identity_providers:
         consent_mode: implicit
         redirect_uris:
           - 'https://smplwise.com/callback'
-            #- 'https://smplwise.com/silent-callback'
+          - 'http://10.0.0.7/callback'
+          # - 'https://localhost/callback'
         scopes:
           - 'openid'
           - 'profile'
@@ -206,7 +221,6 @@ identity_providers:
           # - 'offline_access'
         grant_types:
           - authorization_code
-          - refresh_token
         response_types:
           - 'code'
         response_modes:
