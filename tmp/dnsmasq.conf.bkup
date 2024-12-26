@@ -1,21 +1,25 @@
 # Basic settings
-domain-needed
-bogus-priv
+# domain-needed
+# bogus-priv
 no-resolv
 no-poll
 # clear-on-reload
 # cache-size=0
 
+
+# listen-address=127.0.0.1
+
 # Domain definitions
-# address=/sw.local/192.168.2.100
+address=/sw.local/10.0.0.100
 # address=/noc.sw.local/100.112.56.97
 
 # Upstream DNS servers for internet access
+# server=127.0.0.11
 server=8.8.8.8
 server=8.8.4.4 
 
 # Listen on Tailscale interface
-interface=*
+# interface=*
 bind-interfaces
 
 # Enable logging

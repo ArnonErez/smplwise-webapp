@@ -1,6 +1,6 @@
 import { WebStorageStateStore } from "oidc-client-ts";
 
-// const app_url = import.meta.env.VITE_APP_URL || "https://smplwise.com";
+const app_url = import.meta.env.VITE_APP_URL || "https://mrxprt-vm.tail522f9.ts.net";
 // const auth_url = import.meta.env.VITE_AUTH_URL || "https://smplwise.com/auth";
 // const auth_client_id = import.meta.env.VITE_AUTH_CLIENT_ID || "frontend";
 // const auth_client_secret = import.meta.env.VITE_AUTH_CLIENT_SECRET || "QN_EVekFgTEQPhuLNNnY9JbnnIjxP4nha9BiypIu6M9qrHVw6jfLvd~rPCcnneDzdP2QZoC3";
@@ -8,11 +8,11 @@ import { WebStorageStateStore } from "oidc-client-ts";
 
 const currentHost = window.location.origin;
 
-const app_url = currentHost;
-const auth_url = `${currentHost}/auth`;
+// const app_url = currentHost;
+const auth_url = `${app_url}/auth`;
 const auth_client_id = "frontend";
 const auth_client_secret = "QN_EVekFgTEQPhuLNNnY9JbnnIjxP4nha9BiypIu6M9qrHVw6jfLvd~rPCcnneDzdP2QZoC3";
-const auth_redirect_uri = "https://smplwise.com/callback";
+const auth_redirect_uri = `${app_url}/callback`;
 
 export const oidcConfig = {
     authority: auth_url,

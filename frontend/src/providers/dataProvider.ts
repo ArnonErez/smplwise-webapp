@@ -107,7 +107,7 @@ export const dataProvider: DataProvider = {
     }: GetOneParams): Promise<{ data: TData }> => {
         switch (resource) {
             case "organizations": {
-                const org = await grafanaService.getOrganization(Number(id));
+                const org = await grafanaService.getUserOrganizations();
                 return {
                     data: org as unknown as TData,
                 };

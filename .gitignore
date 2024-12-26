@@ -34,6 +34,7 @@ yarn-error.log*
 # config*.yml
 # users.yml
 db.sqlite3
+secrets
 
 *.pem
 *.crt

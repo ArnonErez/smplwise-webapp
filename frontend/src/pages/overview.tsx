@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { SVG, Path, Container } from '@svgdotjs/svg.js';
 import SolarEnergySystem from "../assets/diagrams/solar/solar_energy_system.svg";
-import { Flex } from "antd";
+import { Flex, Typography } from "antd";
 import { useAuth } from "react-oidc-context";
 
 interface FlowPath {
@@ -136,8 +136,9 @@ export const OverviewPage: React.FC = () => {
         height: '100%'
       }}
     >
-      <div style={{ width: '100%', maxWidth: '500px' }}>
-        <SolarEnergySystem />
+      <div style={{ width: '100%', maxWidth: '500px', textAlign: 'center' }}>
+        {/* <SolarEnergySystem /> */}
+        <Typography.Title level={2}>Welcome to SmplWise</Typography.Title>
       </div>
     </Flex>
   );

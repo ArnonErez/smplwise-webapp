@@ -26,7 +26,7 @@ export const useAuthelia = (): UseAutheliaReturn => {
         groups: auth.user.profile.groups as string[] || [],
     } : null;
 
-    const isAdmin = Boolean(user?.groups.includes('admins'));
+    const isAdmin = Boolean(user?.groups.includes('admin'));
 
     const hasGroup = (group: string): boolean => {
         return Boolean(user?.groups.includes(group));

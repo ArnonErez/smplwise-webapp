@@ -34,7 +34,7 @@ export const authProvider: AuthProvider = {
     
     getPermissions: async () => {
       const auth = useAuth();
-      const isAdmin = auth.user?.profile.groups?.toString().includes('admins');
+      const isAdmin = auth.user?.profile.groups?.toString().includes('admin');
       return isAdmin ? 'admin' : 'user';
     },
     

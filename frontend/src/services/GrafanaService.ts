@@ -35,6 +35,18 @@ export class GrafanaService {
     }
   }
 
+  async getUserOrganizations(): Promise<IGrafanaOrg[]> {
+    try {
+      console.log("getUserOrganizations");
+      const response = await this.http.get('/api/user/orgs');
+      console.log("User Organizations response", response);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching organizations:', error);
+      throw this.handleError(error);
+    }
+  }
+
   // Organization Management
   async createOrganization(data: IGrafanaOrgCreate): Promise<IGrafanaOrg> {
     try {
